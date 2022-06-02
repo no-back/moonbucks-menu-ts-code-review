@@ -2,8 +2,8 @@
 <p align="middle">
   <img width="200px;" src="./src/images/moonbucks.png"/>
 </p>
-<h2 align="middle">JS 문벅스 카페메뉴 앱</h2>
-<p align="middle">Vanilla JS로 구현 하는 상태관리가 가능한 카페메뉴 앱</p>
+<h2 align="middle">TS 문벅스 카페메뉴 앱</h2>
+<p align="middle">Typescript로 구현 하는 상태관리가 가능한 카페메뉴 앱</p>
 <p align="middle">
   <img src="https://img.shields.io/badge/version-1.0.0-blue?style=flat-square" alt="template version"/>
   <img src="https://img.shields.io/badge/language-html-red.svg?style=flat-square"/>
@@ -147,8 +147,8 @@
 {
   response: [
     {
-      id: "string",
-      name: "string",
+      id: 'string',
+      name: 'string',
       isSoldOut: Boolean,
     },
   ];

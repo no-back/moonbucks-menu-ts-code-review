@@ -16,6 +16,7 @@
   },
   "scripts": {
     "start": "tsc-watch --onSuccess \"node build/index.js\"",
-    "test": "jest"
+    "test": "jest --watchAll --collect[=true] --logHeapUsage",
+    "cy": "cypress run --headless"
   }
 }
