@@ -6,7 +6,7 @@ function App(this: any) {
   // init Variables
   const $menuForm = $("#espresso-menu-form");
   const $menuList = $("#espresso-menu-list");
-  const $menuNameInput = $("#espresso-menu-name");
+  const $menuNameInput = $("#espresso-menu-name") as HTMLDataElement;
   const $submitButton = $("#espresso-menu-submit-button");
   const $counter = $(".menu-count");
   const $categoryNav = $("#cafe-category-nav");
@@ -24,7 +24,7 @@ function App(this: any) {
     };
 
     this.menuItems[this.currentCategory] = JSON.parse(
-      localStorage.getItem(this.currentCategory)
+      localStorage.getItem(this.currentCategory) as string
     );
     if (!this.menuItems[this.currentCategory])
       this.menuItems[this.currentCategory] = [];
@@ -115,9 +115,9 @@ function App(this: any) {
     } else if (newMenuName === "") {
       alert("값을 입력해주세요.");
     } else if (newMenuName !== null) {
-      this.menuItems[this.currentCategory][
-        $listItem?.dataset.id
-      ].menuName = newMenuName;
+      const listItemId = $listItem?.dataset.id;
+      if (listItemId === undefined) return;
+      this.menuItems[this.currentCategory][listItemId].menuName = newMenuName;
       setState(this.menuItems[this.currentCategory]);
       localStorage.setItem(
         this.currentCategory,
@@ -180,12 +180,11 @@ function App(this: any) {
       else if (isContainedClass("menu-sold-out-button", e)) {
         const target = e.target as Element;
         const $listItem = target.closest("li");
-        let status = this.menuItems[this.currentCategory][$listItem?.dataset.id]
-          .status;
+        const listItemId = $listItem?.dataset.id;
+        if (listItemId === undefined) return;
+        let status = this.menuItems[this.currentCategory][listItemId].status;
         status = status == "normal" ? "sold-out" : "normal";
-        this.menuItems[this.currentCategory][
-          $listItem?.dataset.id
-        ].status = status;
+        this.menuItems[this.currentCategory][listItemId].status = status;
         setState(this.menuItems[this.currentCategory]);
         localStorage.setItem(
           this.currentCategory,
@@ -196,12 +195,12 @@ function App(this: any) {
 
     $categoryNav?.addEventListener("click", (e) => {
       if (isContainedClass("cafe-category-name", e)) {
-        const target = e.target as Element;
+        const target = e.target as HTMLElement;
         this.currentCategory = target.dataset.categoryName;
         $menuTitle.innerHTML = `${target.textContent} 메뉴 관리`;
         if (this.menuItems[this.currentCategory]) {
           this.menuItems[this.currentCategory] = JSON.parse(
-            localStorage.getItem(this.currentCategory)
+            localStorage.getItem(this.currentCategory) as string
           );
           if (!this.menuItems[this.currentCategory])
             this.menuItems[this.currentCategory] = [];
