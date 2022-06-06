@@ -2,7 +2,7 @@ const $ = (selector: string) => {
   return document.querySelector(selector);
 };
 
-function App() {
+function App(this: any) {
   // init Variables
   const $menuForm = $("#espresso-menu-form");
   const $menuList = $("#espresso-menu-list");
@@ -33,7 +33,7 @@ function App() {
     render();
   };
 
-  const setState = (menuItems) => {
+  const setState = (menuItems: any) => {
     if (this.menuItems[this.currentCategory] !== menuItems) {
       this.menuItems[this.currentCategory] = menuItems;
     }
@@ -43,7 +43,7 @@ function App() {
   const render = () => {
     if (this.menuItems[this.currentCategory]) {
       $menuList.innerHTML = this.menuItems[this.currentCategory]
-        .map((item, index) => {
+        .map((item: { status: any; menuName: any }, index: any) => {
           return `<li data-id="${index}" class=" menu-list-item  d-flex items-center py-2">
       <span class="${item.status} w-100 pl-2 menu-name">${item.menuName}</span>
       <button
@@ -100,7 +100,7 @@ function App() {
     );
   };
 
-  const modifyMenuItem = (e) => {
+  const modifyMenuItem = (e: Event) => {
     const $listItem = e.target.closest("li");
     const $menuName = $listItem.querySelector(".menu-name");
     const newMenuName = prompt(
@@ -124,7 +124,7 @@ function App() {
     }
   };
 
-  const removeMenuItem = (e) => {
+  const removeMenuItem = (e: Event) => {
     const $listItem = e.target.closest("li");
     if (confirm("해당 메뉴를 삭제하시겠습니까?")) {
       this.menuItems[this.currentCategory].splice($listItem.dataset.id, 1);
@@ -141,14 +141,14 @@ function App() {
     $counter.textContent = `총 ${menuCount} 개`;
   };
 
-  const isContainedClass = (className, e) => {
+  const isContainedClass = (className: string, e: Event) => {
     if (e.target.classList.contains(className)) return true;
     else return false;
   };
 
-  const isDuplicatedMenuName = (newMenuName) => {
+  const isDuplicatedMenuName = (newMenuName: any) => {
     const duplicatedMenuItem = this.menuItems[this.currentCategory].find(
-      (item) => {
+      (item: { menuName: any }) => {
         if (item.menuName == newMenuName) return item;
       }
     );
