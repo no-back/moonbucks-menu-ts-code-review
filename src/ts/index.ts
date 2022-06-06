@@ -211,5 +211,5 @@ function App(this: any) {
   };
 }
 
-const app = new App();
+const app = new (App as any)();
 app.init();
