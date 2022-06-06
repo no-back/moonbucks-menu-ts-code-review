@@ -1,5 +1,5 @@
 const $ = (selector: string) => {
-  return document.querySelector(selector);
+  return document.querySelector(selector) as HTMLElement;
 };
 
 function App(this: any) {
@@ -69,26 +69,26 @@ function App(this: any) {
         .join("");
       updateMenuCount();
       $menuNameInput.value = "";
-      $menuNameInput?.focus();
+      $menuNameInput.focus();
     }
   };
 
   // Functions
   const addMenuItem = () => {
-    if (isDuplicatedMenuName($menuNameInput?.value)) {
+    if (isDuplicatedMenuName($menuNameInput.value)) {
       alert("이미 동일한 메뉴명이 있습니다.");
       $menuNameInput.value = "";
-      $menuNameInput?.focus();
+      $menuNameInput.focus();
       return;
     }
     if ($menuNameInput.value.trim() === "") {
       alert("공백 값을 입력하셨습니다.");
       $menuNameInput.value = "";
-      $menuNameInput?.focus();
+      $menuNameInput.focus();
       return;
     }
     const menuItemInfo = {
-      menuName: $menuNameInput?.value,
+      menuName: $menuNameInput.value,
       category: this.currentCategory,
       status: "normal", // || sold-out
     };
@@ -101,20 +101,22 @@ function App(this: any) {
   };
 
   const modifyMenuItem = (e: Event) => {
-    const $listItem = e.target?.closest("li");
-    const $menuName = $listItem.querySelector(".menu-name");
+    const target = e.target as Element;
+    const $listItem = target.closest("li");
+    const $menuName = $listItem?.querySelector(".menu-name");
+    const promptText = $menuName?.textContent;
     const newMenuName = prompt(
       "수정할 메뉴명을 적어주세요.",
-      $menuName.textContent
+      promptText ? promptText : undefined
     );
 
-    if (newMenuName === $menuName.textContent) {
+    if (newMenuName === $menuName?.textContent) {
       alert("기존과 동일한 메뉴명입니다.");
     } else if (newMenuName === "") {
       alert("값을 입력해주세요.");
     } else if (newMenuName !== null) {
       this.menuItems[this.currentCategory][
-        $listItem.dataset.id
+        $listItem?.dataset.id
       ].menuName = newMenuName;
       setState(this.menuItems[this.currentCategory]);
       localStorage.setItem(
@@ -125,9 +127,10 @@ function App(this: any) {
   };
 
   const removeMenuItem = (e: Event) => {
-    const $listItem = e.target?.closest("li");
+    const target = e.target as Element;
+    const $listItem = target.closest("li");
     if (confirm("해당 메뉴를 삭제하시겠습니까?")) {
-      this.menuItems[this.currentCategory].splice($listItem.dataset.id, 1);
+      this.menuItems[this.currentCategory].splice($listItem?.dataset.id, 1);
       setState(this.menuItems[this.currentCategory]);
       localStorage.setItem(
         this.currentCategory,
@@ -137,12 +140,13 @@ function App(this: any) {
   };
 
   const updateMenuCount = () => {
-    const menuCount = $menuList?.querySelectorAll("li").length;
+    const menuCount = $menuList.querySelectorAll("li").length;
     $counter.textContent = `총 ${menuCount} 개`;
   };
 
   const isContainedClass = (className: string, e: Event) => {
-    if (e.target?.classList.contains(className)) return true;
+    const target = e.target as Element;
+    if (target.classList.contains(className)) return true;
     else return false;
   };
 
@@ -157,29 +161,30 @@ function App(this: any) {
   };
 
   const initEventHandlers = () => {
-    $menuForm?.addEventListener("submit", (e) => {
+    $menuForm.addEventListener("submit", (e) => {
       e.preventDefault();
     });
 
-    $menuNameInput?.addEventListener("keyup", (e) => {
+    $menuNameInput.addEventListener("keyup", (e) => {
       if (e.key === "Enter" && $menuNameInput.value !== "") addMenuItem();
     });
 
-    $submitButton?.addEventListener("click", () => {
+    $submitButton.addEventListener("click", () => {
       if ($menuNameInput.value === "") alert("값을 입력해주세요.");
       else addMenuItem();
     });
 
-    $menuList?.addEventListener("click", (e) => {
+    $menuList.addEventListener("click", (e) => {
       if (isContainedClass("menu-edit-button", e)) modifyMenuItem(e);
       else if (isContainedClass("menu-remove-button", e)) removeMenuItem(e);
       else if (isContainedClass("menu-sold-out-button", e)) {
-        const $listItem = e.target?.closest("li");
-        let status = this.menuItems[this.currentCategory][$listItem.dataset.id]
+        const target = e.target as Element;
+        const $listItem = target.closest("li");
+        let status = this.menuItems[this.currentCategory][$listItem?.dataset.id]
           .status;
         status = status == "normal" ? "sold-out" : "normal";
         this.menuItems[this.currentCategory][
-          $listItem.dataset.id
+          $listItem?.dataset.id
         ].status = status;
         setState(this.menuItems[this.currentCategory]);
         localStorage.setItem(
@@ -191,8 +196,9 @@ function App(this: any) {
 
     $categoryNav?.addEventListener("click", (e) => {
       if (isContainedClass("cafe-category-name", e)) {
-        this.currentCategory = e.target?.dataset.categoryName;
-        $menuTitle.innerHTML = `${e.target?.textContent} 메뉴 관리`;
+        const target = e.target as Element;
+        this.currentCategory = target.dataset.categoryName;
+        $menuTitle.innerHTML = `${target.textContent} 메뉴 관리`;
         if (this.menuItems[this.currentCategory]) {
           this.menuItems[this.currentCategory] = JSON.parse(
             localStorage.getItem(this.currentCategory)
