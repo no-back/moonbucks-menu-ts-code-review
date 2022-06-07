@@ -1,31 +1,33 @@
 import { $, $$ } from "./utils/DOM";
-import menuItemTemplate from "./utils/MenuItem";
-
-interface Menu {
-  id: Number;
-  soldOut: Boolean;
-  name: String;
-}
+import menuItemTemplate, { Item } from "./utils/MenuItem";
 export default function App(this: any) {
   this.currentCategory = "espresso";
   this.menu = { [this.currentCategory]: [] };
+  this.menuList = $("#menu-list") as HTMLElement;
   this.init = () => {
+    render();
     initEventListener();
   };
   this.menuInput = $("#menu-name") as HTMLInputElement;
   this.menuForm = $("#menu-form") as HTMLFormElement;
 
+  const render = () => {
+    const template = this.menu[this.currentCategory]
+      .map((item: Item) => menuItemTemplate(item))
+      .join("");
+    this.menuList.innerHTML = template;
+  };
   const addMenuName = () => {
     const newMenuName = this.menuInput.value.trim();
     this.menuInput.value = "";
     if (!newMenuName) return;
-    const newMenuObj: Menu = {
+    const newMenuObj: Item = {
       name: newMenuName,
       id: Date.now(),
       soldOut: false,
     };
     this.menu[this.currentCategory].push(newMenuObj);
-    console.log(this.menu);
+    render();
   };
 
   const initEventListener = () => {

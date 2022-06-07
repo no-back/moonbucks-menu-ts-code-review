@@ -1,6 +1,6 @@
-interface Item {
+export interface Item {
   id: Number;
-  isSoldOut: Boolean;
+  soldOut: Boolean;
   name: string;
 }
 
@@ -8,7 +8,7 @@ const menuItemTemplate = (item: Item) => {
   return `
     <li 
       class="menu-list-item d-flex items-center py-2" data-menu-id=${item.id}>
-      <span class="${item.isSoldOut ? "sold-out" : ""}  w-100 pl-2 menu-name">${
+      <span class="${item.soldOut ? "sold-out" : ""}  w-100 pl-2 menu-name">${
     item.name
   }</span>
       <button
