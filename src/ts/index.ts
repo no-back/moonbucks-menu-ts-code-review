@@ -10,12 +10,19 @@ export default function App(this: any) {
   };
   this.menuInput = $("#menu-name") as HTMLInputElement;
   this.menuForm = $("#menu-form") as HTMLFormElement;
+  this.menuCount = $(".menu-count") as HTMLParagraphElement;
 
   const render = () => {
     const template = this.menu[this.currentCategory]
       .map((item: Item) => menuItemTemplate(item))
       .join("");
     this.menuList.innerHTML = template;
+    getMenuCount();
+  };
+
+  const getMenuCount = () => {
+    const count = this.menu[this.currentCategory].length;
+    this.menuCount.textContent = `총 ${count} 개`;
   };
   const addMenuName = () => {
     const newMenuName = this.menuInput.value.trim();
