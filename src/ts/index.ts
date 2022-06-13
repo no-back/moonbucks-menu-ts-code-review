@@ -19,7 +19,7 @@ class App {
   menuItems: menuItems;
 
   constructor() {
-    this.currentCategory = DOM.$categoryName.dataset.categoryName;
+    this.currentCategory = DOM.$categoryName.dataset.categoryName!;
     this.menuItems = {
       espresso: [],
       frappuccino: [],
@@ -197,7 +197,7 @@ class App {
     DOM.$categoryNav.addEventListener("click", (e) => {
       if (this.isContainedClass("cafe-category-name", e)) {
         const target = e.target as HTMLElement;
-        this.currentCategory = target.dataset.categoryName;
+        this.currentCategory = target.dataset.categoryName!;
         DOM.$menuTitle.innerHTML = `${target.textContent} 메뉴 관리`;
         if (this.menuItems[this.currentCategory]) {
           this.menuItems[this.currentCategory] = JSON.parse(
