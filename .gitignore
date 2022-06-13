@@ -106,3 +106,6 @@ dist
 build/
 .DS_Store
 src/.DS_Store
+src/ts/StringValidator.ts
+src/ts/ZipCodeValidator.ts
+src/ts/index copy.ts
