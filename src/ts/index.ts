@@ -1,7 +1,10 @@
 import { DOM } from "./dom";
 
-function App(this: any) {
-  this.init = () => {
+class App {
+  currentCategory: string | undefined;
+  menuItems: {};
+
+  constructor() {
     this.currentCategory = DOM.$categoryName?.dataset.categoryName;
     this.menuItems = {
       espresso: [],
@@ -11,24 +14,18 @@ function App(this: any) {
       dessert: [],
     };
 
-    this.menuItems[this.currentCategory] = JSON.parse(
-      localStorage.getItem(this.currentCategory) as string
-    );
-    if (!this.menuItems[this.currentCategory])
-      this.menuItems[this.currentCategory] = [];
+    this.initEventHandlers();
+    this.render();
+  }
 
-    initEventHandlers();
-    render();
-  };
-
-  const setState = (menuItems: any) => {
+  setState = (menuItems) => {
     if (this.menuItems[this.currentCategory] !== menuItems) {
       this.menuItems[this.currentCategory] = menuItems;
     }
-    render();
+    this.render();
   };
 
-  const render = () => {
+  render = () => {
     if (this.menuItems[this.currentCategory]) {
       DOM.$menuList.innerHTML = this.menuItems[this.currentCategory]
         .map((item: { status: any; menuName: any }, index: any) => {
@@ -55,15 +52,15 @@ function App(this: any) {
   </li>`;
         })
         .join("");
-      updateMenuCount();
+      this.updateMenuCount();
       DOM.$menuNameInput.value = "";
       DOM.$menuNameInput.focus();
     }
   };
 
   // Functions
-  const addMenuItem = () => {
-    if (isDuplicatedMenuName(DOM.$menuNameInput.value)) {
+  addMenuItem = () => {
+    if (this.isDuplicatedMenuName(DOM.$menuNameInput.value)) {
       alert("이미 동일한 메뉴명이 있습니다.");
       DOM.$menuNameInput.value = "";
       DOM.$menuNameInput.focus();
@@ -81,14 +78,14 @@ function App(this: any) {
       status: "normal", // || sold-out
     };
     this.menuItems[this.currentCategory].push(menuItemInfo);
-    setState(this.menuItems[this.currentCategory]);
+    this.setState(this.menuItems[this.currentCategory]);
     localStorage.setItem(
       this.currentCategory,
       JSON.stringify(this.menuItems[this.currentCategory])
     );
   };
 
-  const modifyMenuItem = (e: Event) => {
+  modifyMenuItem = (e: Event) => {
     const target = e.target as Element;
     const $listItem = target.closest("li");
     const $menuName = $listItem?.querySelector(".menu-name");
@@ -106,7 +103,7 @@ function App(this: any) {
       const listItemId = $listItem?.dataset.id;
       if (listItemId === undefined) return;
       this.menuItems[this.currentCategory][listItemId].menuName = newMenuName;
-      setState(this.menuItems[this.currentCategory]);
+      this.setState(this.menuItems[this.currentCategory]);
       localStorage.setItem(
         this.currentCategory,
         JSON.stringify(this.menuItems[this.currentCategory])
@@ -114,12 +111,12 @@ function App(this: any) {
     }
   };
 
-  const removeMenuItem = (e: Event) => {
+  removeMenuItem = (e: Event) => {
     const target = e.target as Element;
     const $listItem = target.closest("li");
     if (confirm("해당 메뉴를 삭제하시겠습니까?")) {
       this.menuItems[this.currentCategory].splice($listItem?.dataset.id, 1);
-      setState(this.menuItems[this.currentCategory]);
+      this.setState(this.menuItems[this.currentCategory]);
       localStorage.setItem(
         this.currentCategory,
         JSON.stringify(this.menuItems[this.currentCategory])
@@ -127,18 +124,18 @@ function App(this: any) {
     }
   };
 
-  const updateMenuCount = () => {
+  updateMenuCount = () => {
     const menuCount = DOM.$menuList.querySelectorAll("li").length;
     DOM.$counter.textContent = `총 ${menuCount} 개`;
   };
 
-  const isContainedClass = (className: string, e: Event) => {
+  isContainedClass = (className: string, e: Event) => {
     const target = e.target as Element;
     if (target.classList.contains(className)) return true;
     else return false;
   };
 
-  const isDuplicatedMenuName = (newMenuName: any) => {
+  isDuplicatedMenuName = (newMenuName: any) => {
     const duplicatedMenuItem = this.menuItems[this.currentCategory].find(
       (item: { menuName: any }) => {
         if (item.menuName == newMenuName) return item;
@@ -148,24 +145,26 @@ function App(this: any) {
     return false;
   };
 
-  const initEventHandlers = () => {
+  initEventHandlers = () => {
     DOM.$menuForm.addEventListener("submit", (e) => {
       e.preventDefault();
     });
 
     DOM.$menuNameInput.addEventListener("keyup", (e) => {
-      if (e.key === "Enter" && DOM.$menuNameInput.value !== "") addMenuItem();
+      if (e.key === "Enter" && DOM.$menuNameInput.value !== "")
+        this.addMenuItem();
     });
 
     DOM.$submitButton.addEventListener("click", () => {
       if (DOM.$menuNameInput.value === "") alert("값을 입력해주세요.");
-      else addMenuItem();
+      else this.addMenuItem();
     });
 
     DOM.$menuList.addEventListener("click", (e) => {
-      if (isContainedClass("menu-edit-button", e)) modifyMenuItem(e);
-      else if (isContainedClass("menu-remove-button", e)) removeMenuItem(e);
-      else if (isContainedClass("menu-sold-out-button", e)) {
+      if (this.isContainedClass("menu-edit-button", e)) this.modifyMenuItem(e);
+      else if (this.isContainedClass("menu-remove-button", e))
+        this.removeMenuItem(e);
+      else if (this.isContainedClass("menu-sold-out-button", e)) {
         const target = e.target as Element;
         const $listItem = target.closest("li");
         const listItemId = $listItem?.dataset.id;
@@ -173,7 +172,7 @@ function App(this: any) {
         let status = this.menuItems[this.currentCategory][listItemId].status;
         status = status == "normal" ? "sold-out" : "normal";
         this.menuItems[this.currentCategory][listItemId].status = status;
-        setState(this.menuItems[this.currentCategory]);
+        this.setState(this.menuItems[this.currentCategory]);
         localStorage.setItem(
           this.currentCategory,
           JSON.stringify(this.menuItems[this.currentCategory])
@@ -182,7 +181,7 @@ function App(this: any) {
     });
 
     DOM.$categoryNav?.addEventListener("click", (e) => {
-      if (isContainedClass("cafe-category-name", e)) {
+      if (this.isContainedClass("cafe-category-name", e)) {
         const target = e.target as HTMLElement;
         this.currentCategory = target.dataset.categoryName;
         DOM.$menuTitle.innerHTML = `${target.textContent} 메뉴 관리`;
@@ -192,12 +191,13 @@ function App(this: any) {
           );
           if (!this.menuItems[this.currentCategory])
             this.menuItems[this.currentCategory] = [];
-          setState(this.menuItems[this.currentCategory]);
+
+          this.setState(this.menuItems[this.currentCategory]);
         }
       }
     });
   };
 }
 
-const app = new (App as any)();
-app.init();
+const app = new App();
+app.render();
