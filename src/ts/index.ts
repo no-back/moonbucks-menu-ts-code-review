@@ -6,16 +6,18 @@ type categoryIndex =
   | "blended"
   | "teavana"
   | "dessert";
-type menuItems = { [k in categoryIndex]?: object[] }; // index signature
+type menuItems = {
+  [k in categoryIndex]?: object[];
+};
 
-type menuItemInfo = {
+interface menuItemInfo {
   category: string;
   menuName: string;
   status: string;
-};
+}
 
 class App {
-  currentCategory: string;
+  currentCategory: string; // categoryIndex;
   menuItems: menuItems;
 
   constructor() {
@@ -27,6 +29,12 @@ class App {
       teavana: [],
       dessert: [],
     };
+
+    this.menuItems[this.currentCategory] = JSON.parse(
+      localStorage.getItem(this.currentCategory) as string
+    );
+    if (!this.menuItems[this.currentCategory])
+      this.menuItems[this.currentCategory] = [];
 
     this.initEventHandlers();
     this.render();
@@ -214,4 +222,3 @@ class App {
 }
 
 const app = new App();
-app.render();
