@@ -1,11 +1,18 @@
 import { DOM } from "./dom";
 
+type categoryIndex =
+  | "espresso"
+  | "frappuccino"
+  | "blended"
+  | "teavana"
+  | "dessert";
+
 class App {
   currentCategory: string | undefined;
-  menuItems: {};
+  menuItems: { [k in categoryIndex]?: object[] }; // index signature
 
   constructor() {
-    this.currentCategory = DOM.$categoryName?.dataset.categoryName;
+    this.currentCategory = DOM.$categoryName.dataset.categoryName;
     this.menuItems = {
       espresso: [],
       frappuccino: [],
@@ -18,7 +25,7 @@ class App {
     this.render();
   }
 
-  setState = (menuItems) => {
+  setState = (menuItems: menuItems) => {
     if (this.menuItems[this.currentCategory] !== menuItems) {
       this.menuItems[this.currentCategory] = menuItems;
     }
