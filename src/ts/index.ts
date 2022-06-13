@@ -1,18 +1,8 @@
-import { $ } from "./util";
+import { DOM } from "./dom";
 
 function App(this: any) {
-  // init Variables
-  const $menuForm = $("#espresso-menu-form");
-  const $menuList = $("#espresso-menu-list");
-  const $menuNameInput = $("#espresso-menu-name") as HTMLDataElement;
-  const $submitButton = $("#espresso-menu-submit-button");
-  const $counter = $(".menu-count");
-  const $categoryNav = $("#cafe-category-nav");
-  const $categoryName = $(".cafe-category-name");
-  const $menuTitle = $(".mt-1");
-
   this.init = () => {
-    this.currentCategory = $categoryName?.dataset.categoryName;
+    this.currentCategory = DOM.$categoryName?.dataset.categoryName;
     this.menuItems = {
       espresso: [],
       frappuccino: [],
@@ -40,7 +30,7 @@ function App(this: any) {
 
   const render = () => {
     if (this.menuItems[this.currentCategory]) {
-      $menuList.innerHTML = this.menuItems[this.currentCategory]
+      DOM.$menuList.innerHTML = this.menuItems[this.currentCategory]
         .map((item: { status: any; menuName: any }, index: any) => {
           return `<li data-id="${index}" class=" menu-list-item  d-flex items-center py-2">
       <span class="${item.status} w-100 pl-2 menu-name">${item.menuName}</span>
@@ -66,27 +56,27 @@ function App(this: any) {
         })
         .join("");
       updateMenuCount();
-      $menuNameInput.value = "";
-      $menuNameInput.focus();
+      DOM.$menuNameInput.value = "";
+      DOM.$menuNameInput.focus();
     }
   };
 
   // Functions
   const addMenuItem = () => {
-    if (isDuplicatedMenuName($menuNameInput.value)) {
+    if (isDuplicatedMenuName(DOM.$menuNameInput.value)) {
       alert("이미 동일한 메뉴명이 있습니다.");
-      $menuNameInput.value = "";
-      $menuNameInput.focus();
+      DOM.$menuNameInput.value = "";
+      DOM.$menuNameInput.focus();
       return;
     }
-    if ($menuNameInput.value.trim() === "") {
+    if (DOM.$menuNameInput.value.trim() === "") {
       alert("공백 값을 입력하셨습니다.");
-      $menuNameInput.value = "";
-      $menuNameInput.focus();
+      DOM.$menuNameInput.value = "";
+      DOM.$menuNameInput.focus();
       return;
     }
     const menuItemInfo = {
-      menuName: $menuNameInput.value,
+      menuName: DOM.$menuNameInput.value,
       category: this.currentCategory,
       status: "normal", // || sold-out
     };
@@ -138,8 +128,8 @@ function App(this: any) {
   };
 
   const updateMenuCount = () => {
-    const menuCount = $menuList.querySelectorAll("li").length;
-    $counter.textContent = `총 ${menuCount} 개`;
+    const menuCount = DOM.$menuList.querySelectorAll("li").length;
+    DOM.$counter.textContent = `총 ${menuCount} 개`;
   };
 
   const isContainedClass = (className: string, e: Event) => {
@@ -159,20 +149,20 @@ function App(this: any) {
   };
 
   const initEventHandlers = () => {
-    $menuForm.addEventListener("submit", (e) => {
+    DOM.$menuForm.addEventListener("submit", (e) => {
       e.preventDefault();
     });
 
-    $menuNameInput.addEventListener("keyup", (e) => {
-      if (e.key === "Enter" && $menuNameInput.value !== "") addMenuItem();
+    DOM.$menuNameInput.addEventListener("keyup", (e) => {
+      if (e.key === "Enter" && DOM.$menuNameInput.value !== "") addMenuItem();
     });
 
-    $submitButton.addEventListener("click", () => {
-      if ($menuNameInput.value === "") alert("값을 입력해주세요.");
+    DOM.$submitButton.addEventListener("click", () => {
+      if (DOM.$menuNameInput.value === "") alert("값을 입력해주세요.");
       else addMenuItem();
     });
 
-    $menuList.addEventListener("click", (e) => {
+    DOM.$menuList.addEventListener("click", (e) => {
       if (isContainedClass("menu-edit-button", e)) modifyMenuItem(e);
       else if (isContainedClass("menu-remove-button", e)) removeMenuItem(e);
       else if (isContainedClass("menu-sold-out-button", e)) {
@@ -191,11 +181,11 @@ function App(this: any) {
       }
     });
 
-    $categoryNav?.addEventListener("click", (e) => {
+    DOM.$categoryNav?.addEventListener("click", (e) => {
       if (isContainedClass("cafe-category-name", e)) {
         const target = e.target as HTMLElement;
         this.currentCategory = target.dataset.categoryName;
-        $menuTitle.innerHTML = `${target.textContent} 메뉴 관리`;
+        DOM.$menuTitle.innerHTML = `${target.textContent} 메뉴 관리`;
         if (this.menuItems[this.currentCategory]) {
           this.menuItems[this.currentCategory] = JSON.parse(
             localStorage.getItem(this.currentCategory) as string
