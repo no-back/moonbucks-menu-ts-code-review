@@ -6,10 +6,17 @@ type categoryIndex =
   | "blended"
   | "teavana"
   | "dessert";
+type menuItems = { [k in categoryIndex]?: object[] }; // index signature
+
+type menuItemInfo = {
+  category: string;
+  menuName: string;
+  status: string;
+};
 
 class App {
-  currentCategory: string | undefined;
-  menuItems: { [k in categoryIndex]?: object[] }; // index signature
+  currentCategory: string;
+  menuItems: menuItems;
 
   constructor() {
     this.currentCategory = DOM.$categoryName.dataset.categoryName;
@@ -35,7 +42,7 @@ class App {
   render = () => {
     if (this.menuItems[this.currentCategory]) {
       DOM.$menuList.innerHTML = this.menuItems[this.currentCategory]
-        .map((item: { status: any; menuName: any }, index: any) => {
+        .map((item: menuItemInfo, index: number) => {
           return `<li data-id="${index}" class=" menu-list-item  d-flex items-center py-2">
       <span class="${item.status} w-100 pl-2 menu-name">${item.menuName}</span>
       <button
@@ -79,7 +86,7 @@ class App {
       DOM.$menuNameInput.focus();
       return;
     }
-    const menuItemInfo = {
+    const menuItemInfo: menuItemInfo = {
       menuName: DOM.$menuNameInput.value,
       category: this.currentCategory,
       status: "normal", // || sold-out
@@ -142,9 +149,9 @@ class App {
     else return false;
   };
 
-  isDuplicatedMenuName = (newMenuName: any) => {
+  isDuplicatedMenuName = (newMenuName: string) => {
     const duplicatedMenuItem = this.menuItems[this.currentCategory].find(
-      (item: { menuName: any }) => {
+      (item: menuItemInfo) => {
         if (item.menuName == newMenuName) return item;
       }
     );
@@ -187,7 +194,7 @@ class App {
       }
     });
 
-    DOM.$categoryNav?.addEventListener("click", (e) => {
+    DOM.$categoryNav.addEventListener("click", (e) => {
       if (this.isContainedClass("cafe-category-name", e)) {
         const target = e.target as HTMLElement;
         this.currentCategory = target.dataset.categoryName;
