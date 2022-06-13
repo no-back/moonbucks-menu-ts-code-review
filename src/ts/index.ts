@@ -1,6 +1,4 @@
-const $ = (selector: string) => {
-  return document.querySelector(selector) as HTMLElement;
-};
+import { $ } from "./util";
 
 function App(this: any) {
   // init Variables
