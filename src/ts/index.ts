@@ -40,9 +40,9 @@ class App {
     this.render();
   }
 
-  setState = (menuItems: menuItems) => {
-    if (this.menuItems[this.currentCategory] !== menuItems) {
-      this.menuItems[this.currentCategory] = menuItems;
+  setState = (newMenuItems: menuItems) => {
+    if (this.menuItems[this.currentCategory] !== newMenuItems) {
+      this.menuItems[this.currentCategory] = newMenuItems;
     }
     this.render();
   };
@@ -221,4 +221,4 @@ class App {
   };
 }
 
-const app = new App();
+new App();
