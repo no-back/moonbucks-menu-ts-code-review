@@ -1,4 +1,5 @@
 import { DOM } from "./dom";
+import { store } from "./Store";
 
 type categoryIndex =
   | "espresso"
@@ -6,18 +7,12 @@ type categoryIndex =
   | "blended"
   | "teavana"
   | "dessert";
+
 type menuItems = {
   [k in categoryIndex]?: object[];
 };
-
-interface menuItemInfo {
-  category: string;
-  menuName: string;
-  status: string;
-}
-
 class App {
-  currentCategory: string; // categoryIndex;
+  currentCategory: string;
   menuItems: menuItems;
 
   constructor() {
@@ -29,10 +24,10 @@ class App {
       teavana: [],
       dessert: [],
     };
-
-    this.menuItems[this.currentCategory] = JSON.parse(
-      localStorage.getItem(this.currentCategory) as string
+    this.menuItems[this.currentCategory] = store.getLocalStorage(
+      this.currentCategory
     );
+
     if (!this.menuItems[this.currentCategory])
       this.menuItems[this.currentCategory] = [];
 
@@ -50,7 +45,7 @@ class App {
   render = () => {
     if (this.menuItems[this.currentCategory]) {
       DOM.$menuList.innerHTML = this.menuItems[this.currentCategory]
-        .map((item: menuItemInfo, index: number) => {
+        .map((item: { status: string; menuName: string }, index: number) => {
           return `<li data-id="${index}" class=" menu-list-item  d-flex items-center py-2">
       <span class="${item.status} w-100 pl-2 menu-name">${item.menuName}</span>
       <button
@@ -101,9 +96,9 @@ class App {
     };
     this.menuItems[this.currentCategory].push(menuItemInfo);
     this.setState(this.menuItems[this.currentCategory]);
-    localStorage.setItem(
+    store.setLocalStorage(
       this.currentCategory,
-      JSON.stringify(this.menuItems[this.currentCategory])
+      this.menuItems[this.currentCategory]
     );
   };
 
@@ -116,8 +111,10 @@ class App {
       "수정할 메뉴명을 적어주세요.",
       promptText ? promptText : undefined
     );
-
-    if (newMenuName === $menuName?.textContent) {
+    if (!newMenuName) return;
+    if (this.isDuplicatedMenuName(newMenuName)) {
+      alert("이미 동일한 메뉴명이 있습니다.");
+    } else if (newMenuName === $menuName?.textContent) {
       alert("기존과 동일한 메뉴명입니다.");
     } else if (newMenuName === "") {
       alert("값을 입력해주세요.");
@@ -126,9 +123,9 @@ class App {
       if (listItemId === undefined) return;
       this.menuItems[this.currentCategory][listItemId].menuName = newMenuName;
       this.setState(this.menuItems[this.currentCategory]);
-      localStorage.setItem(
+      store.setLocalStorage(
         this.currentCategory,
-        JSON.stringify(this.menuItems[this.currentCategory])
+        this.menuItems[this.currentCategory]
       );
     }
   };
@@ -139,9 +136,9 @@ class App {
     if (confirm("해당 메뉴를 삭제하시겠습니까?")) {
       this.menuItems[this.currentCategory].splice($listItem?.dataset.id, 1);
       this.setState(this.menuItems[this.currentCategory]);
-      localStorage.setItem(
+      store.setLocalStorage(
         this.currentCategory,
-        JSON.stringify(this.menuItems[this.currentCategory])
+        this.menuItems[this.currentCategory]
       );
     }
   };
@@ -159,8 +156,9 @@ class App {
 
   isDuplicatedMenuName = (newMenuName: string) => {
     const duplicatedMenuItem = this.menuItems[this.currentCategory].find(
-      (item: menuItemInfo) => {
-        if (item.menuName == newMenuName) return item;
+      (item: { menuName: string }) => {
+        if (item.menuName == newMenuName) return true;
+        else return false;
       }
     );
     if (duplicatedMenuItem) return true;
@@ -195,9 +193,9 @@ class App {
         status = status == "normal" ? "sold-out" : "normal";
         this.menuItems[this.currentCategory][listItemId].status = status;
         this.setState(this.menuItems[this.currentCategory]);
-        localStorage.setItem(
+        store.setLocalStorage(
           this.currentCategory,
-          JSON.stringify(this.menuItems[this.currentCategory])
+          this.menuItems[this.currentCategory]
         );
       }
     });
