@@ -1,19 +1,10 @@
 import { DOM } from "./dom";
-import { store } from "./Store";
+import store from "./Store";
 
-type categoryIndex =
-  | "espresso"
-  | "frappuccino"
-  | "blended"
-  | "teavana"
-  | "dessert";
-
-type menuItems = {
-  [k in categoryIndex]?: object[];
-};
 class App {
   currentCategory: string;
   menuItems: menuItems;
+  // menuItems: any;
 
   constructor() {
     this.currentCategory = DOM.$categoryName.dataset.categoryName!;
@@ -24,9 +15,9 @@ class App {
       teavana: [],
       dessert: [],
     };
-    this.menuItems[this.currentCategory] = store.getLocalStorage(
-      this.currentCategory
-    );
+    this.menuItems[
+      this.currentCategory as categoryIndex
+    ] = store.getLocalStorage(this.currentCategory);
 
     if (!this.menuItems[this.currentCategory])
       this.menuItems[this.currentCategory] = [];
@@ -89,7 +80,7 @@ class App {
       DOM.$menuNameInput.focus();
       return;
     }
-    const menuItemInfo: menuItemInfo = {
+    const menuItemInfo: MenuItemInfo = {
       menuName: DOM.$menuNameInput.value,
       category: this.currentCategory,
       status: "normal", // || sold-out
