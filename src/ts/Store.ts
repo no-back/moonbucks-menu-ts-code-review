@@ -1,5 +1,5 @@
 class Store {
-  setLocalStorage = (category: string, menuItems: menuItems) => {
+  setLocalStorage = (category: string, menuItems: []) => {
     return localStorage.setItem(category, JSON.stringify(menuItems));
   };
   getLocalStorage = (category: string) => {

@@ -1,10 +1,9 @@
 import { DOM } from "./dom";
 import store from "./Store";
 
-class App {
+export class App {
   currentCategory: string;
   menuItems: menuItems;
-  // menuItems: any;
 
   constructor() {
     this.currentCategory = DOM.$categoryName.dataset.categoryName!;
@@ -15,9 +14,9 @@ class App {
       teavana: [],
       dessert: [],
     };
-    this.menuItems[
-      this.currentCategory as categoryIndex
-    ] = store.getLocalStorage(this.currentCategory);
+    this.menuItems[this.currentCategory] = store.getLocalStorage(
+      this.currentCategory
+    );
 
     if (!this.menuItems[this.currentCategory])
       this.menuItems[this.currentCategory] = [];
@@ -26,7 +25,7 @@ class App {
     this.render();
   }
 
-  setState = (newMenuItems: menuItems) => {
+  setState = (newMenuItems: []) => {
     if (this.menuItems[this.currentCategory] !== newMenuItems) {
       this.menuItems[this.currentCategory] = newMenuItems;
     }
@@ -85,12 +84,10 @@ class App {
       category: this.currentCategory,
       status: "normal", // || sold-out
     };
-    this.menuItems[this.currentCategory].push(menuItemInfo);
+    let menuItems = this.menuItems[this.currentCategory];
+    menuItems.push(menuItemInfo);
     this.setState(this.menuItems[this.currentCategory]);
-    store.setLocalStorage(
-      this.currentCategory,
-      this.menuItems[this.currentCategory]
-    );
+    store.setLocalStorage(this.currentCategory, menuItems);
   };
 
   modifyMenuItem = (e: Event) => {
@@ -110,9 +107,12 @@ class App {
     } else if (newMenuName === "") {
       alert("값을 입력해주세요.");
     } else if (newMenuName !== null) {
-      const listItemId = $listItem?.dataset.id;
-      if (listItemId === undefined) return;
-      this.menuItems[this.currentCategory][listItemId].menuName = newMenuName;
+      let listItemId = Number($listItem?.dataset.id);
+      if (!listItemId) return;
+      let menuItem: MenuItemInfo = this.menuItems[this.currentCategory][
+        listItemId
+      ];
+      menuItem.menuName = newMenuName;
       this.setState(this.menuItems[this.currentCategory]);
       store.setLocalStorage(
         this.currentCategory,
@@ -125,7 +125,10 @@ class App {
     const target = e.target as Element;
     const $listItem = target.closest("li");
     if (confirm("해당 메뉴를 삭제하시겠습니까?")) {
-      this.menuItems[this.currentCategory].splice($listItem?.dataset.id, 1);
+      this.menuItems[this.currentCategory].splice(
+        Number($listItem?.dataset.id),
+        1
+      );
       this.setState(this.menuItems[this.currentCategory]);
       store.setLocalStorage(
         this.currentCategory,
@@ -139,13 +142,13 @@ class App {
     DOM.$counter.textContent = `총 ${menuCount} 개`;
   };
 
-  isContainedClass = (className: string, e: Event) => {
+  isContainedClass = (className: string, e: Event): boolean => {
     const target = e.target as Element;
     if (target.classList.contains(className)) return true;
     else return false;
   };
 
-  isDuplicatedMenuName = (newMenuName: string) => {
+  isDuplicatedMenuName = (newMenuName: string): boolean => {
     const duplicatedMenuItem = this.menuItems[this.currentCategory].find(
       (item: { menuName: string }) => {
         if (item.menuName == newMenuName) return true;
@@ -178,11 +181,14 @@ class App {
       else if (this.isContainedClass("menu-sold-out-button", e)) {
         const target = e.target as Element;
         const $listItem = target.closest("li");
-        const listItemId = $listItem?.dataset.id;
+        const listItemId = Number($listItem?.dataset.id);
         if (listItemId === undefined) return;
-        let status = this.menuItems[this.currentCategory][listItemId].status;
+        let menuItem: { status: string } = this.menuItems[this.currentCategory][
+          listItemId
+        ];
+        let status = menuItem.status;
         status = status == "normal" ? "sold-out" : "normal";
-        this.menuItems[this.currentCategory][listItemId].status = status;
+        menuItem.status = status;
         this.setState(this.menuItems[this.currentCategory]);
         store.setLocalStorage(
           this.currentCategory,
@@ -197,8 +203,8 @@ class App {
         this.currentCategory = target.dataset.categoryName!;
         DOM.$menuTitle.innerHTML = `${target.textContent} 메뉴 관리`;
         if (this.menuItems[this.currentCategory]) {
-          this.menuItems[this.currentCategory] = JSON.parse(
-            localStorage.getItem(this.currentCategory) as string
+          this.menuItems[this.currentCategory] = store.getLocalStorage(
+            this.currentCategory
           );
           if (!this.menuItems[this.currentCategory])
             this.menuItems[this.currentCategory] = [];

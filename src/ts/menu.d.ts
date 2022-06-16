@@ -4,13 +4,14 @@ interface MenuItemInfo {
   status: string;
 }
 
-type categoryIndex =
-  | "espresso"
-  | "frappuccino"
-  | "blended"
-  | "teavana"
-  | "dessert";
+// type categoryIndex =
+//   | "espresso"
+//   | "frappuccino"
+//   | "blended"
+//   | "teavana"
+//   | "dessert";
 
+const arr: MenuItemInfo[] = [];
 type menuItems = {
-  [k in categoryIndex]: object[];
+  [x in string]: arr;
 };
