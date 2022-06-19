@@ -1,4 +1,5 @@
-import { $, $$ } from "./utils/DOM";
+import { $ } from "./utils/DOM";
+import { MESSAGE } from "./utils/const";
 import menuItemTemplate, { Item } from "./utils/MenuItem";
 export default function App(this: any) {
   this.currentCategory = "espresso";
@@ -7,6 +8,7 @@ export default function App(this: any) {
   this.init = () => {
     render();
     initEventListener();
+    this.menuInput.focus();
   };
   this.menuInput = $("#menu-name") as HTMLInputElement;
   this.menuForm = $("#menu-form") as HTMLFormElement;
@@ -27,6 +29,7 @@ export default function App(this: any) {
   const addMenuName = () => {
     const newMenuName = this.menuInput.value.trim();
     this.menuInput.value = "";
+    this.menuInput.focus();
     if (!newMenuName) return;
     const newMenuObj: Item = {
       name: newMenuName,
@@ -37,11 +40,19 @@ export default function App(this: any) {
     render();
   };
 
+  const editMenuName = ($li: Element) => {
+    const $menuName = $li.querySelector(".menu-name");
+    const menu = $menuName?.textContent;
+    let editedMenuName = prompt(MESSAGE.EDIT_MENU, menu ? menu : undefined);
+    editMenuName;
+  };
+
   const initEventListener = () => {
     this.menuForm.addEventListener("submit", (e: Event) => {
       e.preventDefault();
       addMenuName();
     });
+    this.editMenuName();
   };
 }
 
