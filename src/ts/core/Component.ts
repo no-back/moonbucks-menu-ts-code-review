@@ -1,7 +1,10 @@
 export default abstract class Component {
   protected state: object;
-  constructor(protected domNode: HTMLInputElement, protected props: any) {
+  constructor(protected domNode: Element | null, protected props?: object) {
     this.state = {};
+    this.init();
+    this.render();
+    this.setEvent();
   }
 
   abstract init(): void;
@@ -11,7 +14,9 @@ export default abstract class Component {
   abstract template(): string;
 
   render() {
-    this.domNode.innerHTML = this.template();
+    if (this.domNode) {
+      this.domNode.innerHTML = this.template();
+    }
   }
 
   abstract setEvent(): void;
