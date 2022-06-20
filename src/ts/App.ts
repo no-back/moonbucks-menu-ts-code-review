@@ -1,26 +1,14 @@
-import { MenuForm, MenuNav, MenuHeader } from "./components";
+import { MenuForm, MenuNav, MenuHeader, MenuList } from "./components";
 import Component from "./core/Component";
 import { CATEGORY_STATE, INITIAL_CATEGORY } from "./utils/const";
 import { $ } from "./utils/DOM";
-
-interface State {
-  [index: string]: string | object;
-  category: string;
-  menu: { [key: string]: Menu[] };
-}
 
 interface Props {
   [key: string]: string;
 }
 export default class App extends Component<Props> {
-  private state: State;
   constructor(domNode: Element) {
     super(domNode);
-    this.state = {
-      category: INITIAL_CATEGORY,
-      menu: {},
-    };
-    this.init();
   }
   init(): void {
     const menuList = localStorage.getItem("menu");
@@ -48,18 +36,33 @@ export default class App extends Component<Props> {
   }
 
   componentDidMount(): void {
-    const { category, menuItems, changeCategory } = this;
+    const {
+      category,
+      menuItems,
+      changeCategory,
+      addMenu,
+      updateMenu,
+      deleteMenu,
+      toggleSoldOut,
+    } = this;
 
     const $menuForm = $('[data-component="menu-form"]');
     const $menuNav = $('[data-component="menu-nav"]');
     const $menuHeader = $('[data-component="menu-header"]');
+    const $menuList = $('[data-component="menu-list"]');
 
-    new MenuForm($menuForm, { category });
+    new MenuForm($menuForm, { category, addMenu: addMenu.bind(this) });
     new MenuNav($menuNav, {
       category,
       changeCategory: changeCategory.bind(this),
     });
     new MenuHeader($menuHeader, { category, menuItems });
+    new MenuList($menuList, {
+      menuItems,
+      updateMenu: updateMenu.bind(this),
+      deleteMenu: deleteMenu.bind(this),
+      toggleSoldOut: toggleSoldOut.bind(this),
+    });
   }
   get menu() {
     return Object.assign(this.state.menu);
@@ -75,7 +78,6 @@ export default class App extends Component<Props> {
 
   addMenu(menuName: string) {
     if (!menuName.trim()) return;
-
     this.setState({
       ...this.state,
       menu: {
@@ -85,14 +87,64 @@ export default class App extends Component<Props> {
           {
             menuName,
             soldOut: false,
-            menuId: new Date(),
+            menuId: Date.now(),
           },
         ],
       },
     });
+    $("#menu-name").focus();
   }
 
   setEvent(): void {}
+
+  updateMenu(newMenuName: string, targetId: number) {
+    const updatedMenuItems = this.menuItems.map((menuItem) =>
+      menuItem.menuId === targetId
+        ? { ...menuItem, menuName: newMenuName }
+        : menuItem
+    );
+
+    this.setState({
+      ...this.state,
+      menu: {
+        ...this.menu,
+        [this.category]: updatedMenuItems,
+      },
+    });
+  }
+
+  deleteMenu(targetId: number) {
+    const deletedMenuItems = this.menuItems.filter(
+      ({ menuId }) => menuId !== targetId
+    );
+
+    this.setState({
+      ...this.state,
+      menu: {
+        ...this.menu,
+        [this.category]: deletedMenuItems,
+      },
+    });
+  }
+
+  toggleSoldOut(targetId: number) {
+    const soldOutMenuItems = this.menuItems.map((menuItem) =>
+      menuItem.menuId === targetId
+        ? {
+            ...menuItem,
+            soldOut: !menuItem.soldOut,
+          }
+        : menuItem
+    );
+
+    this.setState({
+      ...this.state,
+      menu: {
+        ...this.menu,
+        [this.category]: soldOutMenuItems,
+      },
+    });
+  }
 
   changeCategory(newCategory: any): void {
     this.setState({
@@ -104,5 +156,6 @@ export default class App extends Component<Props> {
   setState(newState: any) {
     this.state = newState;
     this.render();
+    localStorage.setItem("menu", JSON.stringify(this.menu));
   }
 }

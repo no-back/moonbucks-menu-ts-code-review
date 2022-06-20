@@ -4,6 +4,7 @@ import { CATEGORY_NAME } from "../utils/const";
 
 interface Props {
   category: string;
+  addMenu(params: string): void;
 }
 export default class MenuForm extends Component<Props> {
   init(): void {}
@@ -35,8 +36,11 @@ export default class MenuForm extends Component<Props> {
   }
   componentDidMount(): void {}
   setEvent(): void {
+    const { addMenu } = this.props as Props;
+    const menuName = $("#menu-name") as HTMLInputElement;
     this.domNode?.addEventListener("submit", (e: Event) => {
       e.preventDefault();
+      addMenu(menuName.value);
     });
   }
 }
