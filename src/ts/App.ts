@@ -35,7 +35,7 @@ export class App {
   render = () => {
     if (this.menuItems[this.currentCategory]) {
       DOM.$menuList.innerHTML = this.menuItems[this.currentCategory]
-        .map((item: { status: string; menuName: string }, index: number) => {
+        .map((item: MenuItemInfo, index: number) => {
           return `<li data-id="${index}" class=" menu-list-item  d-flex items-center py-2">
       <span class="${item.status} w-100 pl-2 menu-name">${item.menuName}</span>
       <button
