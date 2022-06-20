@@ -90,8 +90,7 @@ export class App {
     store.setLocalStorage(this.currentCategory, menuItems);
   };
 
-  modifyMenuItem = (e: Event) => {
-    const target = e.target as Element;
+  modifyMenuItem = ({ target }: { target: Element }) => {
     const $listItem = target.closest("li");
     const $menuName = $listItem?.querySelector(".menu-name");
     const promptText = $menuName?.textContent;
