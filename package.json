@@ -12,11 +12,14 @@
     "jest": "^28.1.0",
     "ts-jest": "^28.0.3",
     "tsc-watch": "^5.0.3",
-    "typescript": "^4.7.2"
+    "typescript": "^4.7.2",
+    "vite": "^2.9.9"
   },
   "scripts": {
-    "start": "tsc-watch --onSuccess \"node build/index.js\"",
-    "test": "jest --watchAll --collect[=true] --logHeapUsage",
-    "cy": "cypress run --headless"
-  }
+    "dev": "vite",
+    "preview": "vite preview",
+    "build": "tsc && vite build",
+    "test": "jest --watchAll --collect[=true] --logHeapUsage"
+  },
+  "type": "module"
 }
