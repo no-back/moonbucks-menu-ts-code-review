@@ -90,7 +90,8 @@ export class App {
     store.setLocalStorage(this.currentCategory, menuItems);
   };
 
-  modifyMenuItem = ({ target }: { target: Element }) => {
+  modifyMenuItem = (e: Event) => {
+    const target = e.target as HTMLElement;
     const $listItem = target.closest("li");
     const $menuName = $listItem?.querySelector(".menu-name");
     const promptText = $menuName?.textContent;
@@ -121,7 +122,7 @@ export class App {
   };
 
   removeMenuItem = (e: Event) => {
-    const target = e.target as Element;
+    const target = e.target as HTMLElement;
     const $listItem = target.closest("li");
     if (confirm("해당 메뉴를 삭제하시겠습니까?")) {
       this.menuItems[this.currentCategory].splice(
@@ -142,7 +143,7 @@ export class App {
   };
 
   isContainedClass = (className: string, e: Event): boolean => {
-    const target = e.target as Element;
+    const target = e.target as HTMLElement;
     if (target.classList.contains(className)) return true;
     else return false;
   };
@@ -178,7 +179,7 @@ export class App {
       else if (this.isContainedClass("menu-remove-button", e))
         this.removeMenuItem(e);
       else if (this.isContainedClass("menu-sold-out-button", e)) {
-        const target = e.target as Element;
+        const target = e.target as HTMLElement;
         const $listItem = target.closest("li");
         const listItemId = Number($listItem?.dataset.id);
         if (listItemId === undefined) return;
