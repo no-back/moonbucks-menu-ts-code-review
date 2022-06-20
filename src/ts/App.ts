@@ -107,7 +107,7 @@ export class App {
       alert("값을 입력해주세요.");
     } else if (newMenuName !== null) {
       let listItemId = Number($listItem?.dataset.id);
-      if (!listItemId) return;
+      if (!listItemId && listItemId !== 0) return;
       let menuItem: MenuItemInfo = this.menuItems[this.currentCategory][
         listItemId
       ];
