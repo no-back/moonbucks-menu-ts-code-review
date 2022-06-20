@@ -1,11 +1,9 @@
-interface menu {
-  menuName: string;
-  soldOut: boolean;
-  menuId: number;
+interface MenuState {
+  [key: string]: Menu[] | [];
 }
 
-interface MenuState {
-  [key: string]: menu[];
+interface CategoryName {
+  [key: string]: string;
 }
 
 export const MESSAGE = Object.freeze({
@@ -15,15 +13,17 @@ export const MESSAGE = Object.freeze({
   ALREADY_EXISTS: "이미 동일한 메뉴가 있습니다.",
 });
 
+export const INITIAL_CATEGORY = "espresso";
+
 export const CATEGORY_STATE: MenuState = Object.freeze({
   espresso: [],
-  frappucino: [],
+  frappuccino: [],
   blended: [],
   teavana: [],
   dessert: [],
 });
 
-export const CATEGORY_NAME = Object.freeze({
+export const CATEGORY_NAME: CategoryName = Object.freeze({
   espresso: "☕ 에스프레소",
   frappuccino: "🥤 프라푸치노",
   blended: "🍹 블렌디드",
